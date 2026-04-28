@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Godjian PPT - 本地幻灯片生成工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 侧边栏 -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>Godjian PPT</h1>
+                <p>本地幻灯片生成</p>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" data-page="home" class="active">首页</a></li>
+                <li><a href="#" data-page="preview">预览</a></li>
+                <li><a href="#" data-page="styles">风格</a></li>
+                <li><a href="#" data-page="settings">设置</a></li>
+            </ul>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 首页 -->
+            <section id="page-home" class="page active">
+                <div class="card">
+                    <h2>创建新 PPT</h2>
+                    <form id="generate-form">
+                        <div class="form-group">
+                            <label for="topic">PPT 主题</label>
+                            <input type="text" id="topic" placeholder="例如：AI发展趋势、技术分享、产品介绍" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="style">选择风格</label>
+                            <select id="style">
+                                <option value="minimal-white">极简白</option>
+                                <option value="cyber-neon">赛博霓虹</option>
+                                <option value="bauhaus">包豪斯</option>
+                                <option value="japanese-minimal">日式简约</option>
+                                <option value="corporate-blue">企业蓝</option>
+                                <option value="nature-green">自然绿</option>
+                                <option value="dark-tech">暗黑科技</option>
+                                <option value="retro-warm">复古暖色</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pages">页数</label>
+                            <input type="number" id="pages" value="8" min="1" max="30">
+                        </div>
+                        <button type="submit" class="btn-primary">生成 PPT</button>
+                    </form>
+                </div>
+
+                <div class="card" id="progress-card" style="display:none;">
+                    <h2>生成进度</h2>
+                    <div class="progress">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <p id="progress-text">准备中...</p>
+                </div>
+            </section>
+
+            <!-- 预览页 -->
+            <section id="page-preview" class="page">
+                <div class="card">
+                    <h2>预览 PPT</h2>
+                    <div id="preview-info" class="info-box">
+                        <p>请先在首页生成 PPT</p>
+                    </div>
+                    <div id="preview-frame-container" style="display:none;">
+                        <iframe id="preview-frame" src="" frameborder="0"></iframe>
+                    </div>
+                    <div class="preview-controls" id="preview-controls" style="display:none;">
+                        <button class="btn-secondary" onclick="prevPage()">上一页</button>
+                        <span id="page-indicator">1 / 1</span>
+                        <button class="btn-secondary" onclick="nextPage()">下一页</button>
+                        <button class="btn-primary" onclick="openFullscreen()">全屏演示</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 风格页 -->
+            <section id="page-styles" class="page">
+                <div class="card">
+                    <h2>可用风格</h2>
+                    <div id="style-list" class="style-grid"></div>
+                </div>
+            </section>
+
+            <!-- 设置页 -->
+            <section id="page-settings" class="page">
+                <div class="card">
+                    <h2>API 设置</h2>
+                    <div class="info-box">
+                        <p>注意: 由于浏览器安全限制，请使用本地服务器或浏览器扩展来调用 API。</p>
+                        <p>或者直接在生成的 HTML 文件中查看和编辑内容。</p>
+                    </div>
+                    <form id="settings-form">
+                        <div class="form-group">
+                            <label for="provider">Provider</label>
+                            <select id="provider">
+                                <option value="openai">OpenAI</option>
+                                <option value="ollama">Ollama (本地模型)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="api-key">API Key</label>
+                            <input type="password" id="api-key" placeholder="sk-...">
+                        </div>
+                        <div class="form-group">
+                            <label for="base-url">Base URL</label>
+                            <input type="text" id="base-url" placeholder="https://api.openai.com/v1">
+                        </div>
+                        <div class="form-group">
+                            <label for="model">模型</label>
+                            <input type="text" id="model" placeholder="gpt-4o">
+                        </div>
+                        <button type="submit" class="btn-primary">保存设置</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>使用说明</h2>
+                    <div class="info-box">
+                        <h3>方式一: 使用本地服务器</h3>
+                        <p>运行 <code>python -m http.server 8080</code> 或 <code>npx serve .</code></p>
+                        <p>然后在浏览器中打开 http://localhost:8080</p>
+
+                        <h3>方式二: 直接打开</h3>
+                        <p>双击 index.html 直接在浏览器中打开（部分功能可能受限）</p>
+
+                        <h3>方式三: 生成后使用</h3>
+                        <p>生成的 PPT 文件在 output 目录中，可以直接打开 index.html 预览</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
